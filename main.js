@@ -1,11 +1,20 @@
 const { google } = require('googleapis');
 const express = require("express");
 const nodemailer = require('nodemailer');
+const fs = require('fs');
+const qr = require('qrcode');
+const path = require("path")
+const bodyParser = require('body-parser');
+
 require('dotenv').config();
+
+
 
 const app = express();
 const port = 3000;
 
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.urlencoded({ extended: false }));
 const CLIENT_ID =  process.env.CLIENT_ID
 const CLEINT_SECRET = process.env.CLEINT_SECRET
 const REDIRECT_URI = process.env.REDIRECT_URI
@@ -17,9 +26,23 @@ const oAuth2Client = new google.auth.OAuth2(
   );
   oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
-console.log(REFRESH_TOKEN)
 
-async function sendemail() {
+async function generate_qrcode(data){
+
+
+    qr.toFile(file,JSON.stringify({...data }),(err)=>{
+        if(err){
+            console.log(err)
+            return err
+        }
+    })
+
+
+}
+
+
+
+async function sendemail(reeciver,file_path,file_name) {
 
 
     try {
@@ -38,27 +61,53 @@ async function sendemail() {
 
         const mailOptions = {
         from: "aymenfkir23@gmail.com",
-        to: 'aymenfkir@gmail.com',
+        to: reeciver,
         subject: "Registration",
-        text: "your qr code",
+        attachments : [
+            {
+                filename: file_name,
+                path: file_path,
+            },
+        
+        ],
         };
 
         // Use async/await here or handle the Promise returned by sendMail
         const info = await transporter.sendMail(mailOptions);
-        console.log(info)
         return info
     } catch (error) {
         return error
     }
 }
-app.get('/', async (req, res) => {
+
+app.post('/submit', async (req, res) => {
+    
+
+    const data = req.body;
+    // change the email with id when you createa data base 
+    const file_name = data.name +"_"+ data.lastname+"_"+data.email+".png"
+    const file = path.join(__dirname,"qr_codes",file_name)
+        
+    try{
+        await qr.toFile(file,JSON.stringify({...data }))
+
+    }catch (err){
+        console.log(err)
+        res.status(500).send("Internal Server Error");
+    }
     try {
-        const response = await sendemail();
-        console.log(response)
+        const response = await sendemail(data.email, file,file_name);
         res.send(response);
     } catch (error) {
-        res.send(error);
+        console.log(error)
+        res.status(500).send("Internal Server Error");
     }
+
+
+});
+
+app.get('/', async (req, res) => {
+    res.sendFile("index.html")
 });
 
 
