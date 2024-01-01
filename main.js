@@ -3,6 +3,8 @@ const express = require("express");
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const qr = require('qrcode');
+const mysql = require('mysql');
+
 const path = require("path")
 const bodyParser = require('body-parser');
 
@@ -26,6 +28,30 @@ const oAuth2Client = new google.auth.OAuth2(
   );
   oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
+
+async function add_to_db(data){
+    const connection = mysql.createConnection({
+        host: "localhost",
+        user: "root",
+        password: "aymen147",
+        database: "registration_db",
+    });
+    try{
+        connection.connect();
+    }catch(err){
+        return err
+    }
+    try{
+        const sql_querry = "INSERT INTO registration_tb (email, name, lastname, arrival, path_to_image) VALUES (?, ?, ?, ?, ?)";
+        const values = [data.email, data.name, data.lastname, data.arrival, data.path_to_image];
+        const response =  connection.query(sql_querry, values);
+        connection.end()
+        return response
+    }catch(err){
+        connection.end()
+        return err
+    }
+}
 
 async function generate_qrcode(data){
 
@@ -95,6 +121,15 @@ app.post('/submit', async (req, res) => {
         console.log(err)
         res.status(500).send("Internal Server Error");
     }
+
+    try{
+        data["path_to_image"] = file
+        await add_to_db(data)
+    }catch(err){
+        return res.status(500).send("data base error");
+    }
+
+
     try {
         const response = await sendemail(data.email, file,file_name);
         res.send(response);
