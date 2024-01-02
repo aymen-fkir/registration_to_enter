@@ -42,7 +42,7 @@ async function add_to_db(data){
         return err
     }
     try{
-        const sql_querry = "INSERT INTO registration_tb (email, name, lastname, arrival, path_to_image) VALUES (?, ?, ?, ?, ?)";
+        const sql_querry = "INSERT INTO registration_tb (email, name, lastname, arival, path_to_image) VALUES (?, ?, ?, ?, ?)";
         const values = [data.email, data.name, data.lastname, data.arrival, data.path_to_image];
         const response =  connection.query(sql_querry, values);
         connection.end()
@@ -52,21 +52,6 @@ async function add_to_db(data){
         return err
     }
 }
-
-async function generate_qrcode(data){
-
-
-    qr.toFile(file,JSON.stringify({...data }),(err)=>{
-        if(err){
-            console.log(err)
-            return err
-        }
-    })
-
-
-}
-
-
 
 async function sendemail(reeciver,file_path,file_name) {
 
@@ -111,7 +96,7 @@ app.post('/submit', async (req, res) => {
 
     const data = req.body;
     // change the email with id when you createa data base 
-    const file_name = data.name +"_"+ data.lastname+"_"+data.email+".png"
+    const file_name = data.name +"_"+ data.lastname+".png"
     const file = path.join(__dirname,"qr_codes",file_name)
         
     try{

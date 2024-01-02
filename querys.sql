@@ -1,4 +1,4 @@
-create registration_db;
+create database registration_db;
 use registration_db;
 create table registration_tb(
     id int primary key auto_increment
