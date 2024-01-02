@@ -21,6 +21,11 @@ const CLIENT_ID =  process.env.CLIENT_ID
 const CLEINT_SECRET = process.env.CLEINT_SECRET
 const REDIRECT_URI = process.env.REDIRECT_URI
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN
+const host_ = process.env.host
+const user_ = process.env.user
+const password_ = process.env.password
+const database_ = process.env.database
+
 const oAuth2Client = new google.auth.OAuth2(
     CLIENT_ID,
     CLEINT_SECRET,
@@ -31,10 +36,10 @@ const oAuth2Client = new google.auth.OAuth2(
 
 async function add_to_db(data){
     const connection = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "aymen147",
-        database: "registration_db",
+        host: host_,
+        user: user_,
+        password: password_,
+        database: database_,
     });
     try{
         connection.connect();
@@ -108,7 +113,7 @@ app.post('/submit', async (req, res) => {
     }
 
     try{
-        data["path_to_image"] = file
+        data["path_to_image"] = ".\\qrcodes\\"+file_name
         await add_to_db(data)
     }catch(err){
         return res.status(500).send("data base error");
