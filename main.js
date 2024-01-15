@@ -60,40 +60,35 @@ async function add_to_db(data){
 
 async function sendemail(reeciver,file_path,file_name) {
 
+    const accesstoken  = await oAuth2Client.getAccessToken();
+    const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        type: 'OAuth2',
+        user: 'aymenfkir23@gmail.com', // Change to your Gmail address
+        clientId: CLIENT_ID,
+        clientSecret: CLEINT_SECRET,
+        refreshToken: REFRESH_TOKEN,
+        accessToken: accesstoken,
+    },
+    });
 
-    try {
-        const accesstoken  = await oAuth2Client.getAccessToken();
-        const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            type: 'OAuth2',
-            user: 'aymenfkir23@gmail.com', // Change to your Gmail address
-            clientId: CLIENT_ID,
-            clientSecret: CLEINT_SECRET,
-            refreshToken: REFRESH_TOKEN,
-            accessToken: accesstoken,
+    const mailOptions = {
+    from: "aymenfkir23@gmail.com",
+    to: reeciver,
+    subject: "Registration",
+    attachments : [
+        {
+            filename: file_name,
+            path: file_path,
         },
-        });
+    
+    ],
+    };
 
-        const mailOptions = {
-        from: "aymenfkir23@gmail.com",
-        to: reeciver,
-        subject: "Registration",
-        attachments : [
-            {
-                filename: file_name,
-                path: file_path,
-            },
-        
-        ],
-        };
-
-        // Use async/await here or handle the Promise returned by sendMail
-        const info = await transporter.sendMail(mailOptions);
-        return info
-    } catch (error) {
-        return error
-    }
+    // Use async/await here or handle the Promise returned by sendMail
+    const info = await transporter.sendMail(mailOptions);
+    return info
 }
 
 app.post('/submit', async (req, res) => {
