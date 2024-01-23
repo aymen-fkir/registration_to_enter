@@ -1,0 +1,12 @@
+/* CSS HEX
+--ultra-violet: #5E538Bff;
+--quinacridone-magenta: #835165ff;
+--russian-violet: #231439ff;
+--claret: #752539ff;
+--dark-purple: #231230ff; */
+
+.container{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}

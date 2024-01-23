@@ -65,7 +65,7 @@ async function sendemail(reeciver,file_path,file_name) {
     service: 'gmail',
     auth: {
         type: 'OAuth2',
-        user: '', // Change to your Gmail address
+        user: 'aymenfkir23@gmail.com', // Change to your Gmail address
         clientId: CLIENT_ID,
         clientSecret: CLEINT_SECRET,
         refreshToken: REFRESH_TOKEN,
