@@ -11,7 +11,6 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 
 
-
 const app = express();
 const port = 3000;
 
@@ -94,7 +93,13 @@ async function sendemail(reeciver,file_path,file_name) {
 app.post('/submit', async (req, res) => {
     
 
-    const data = req.body;
+    const form_data = req.body;
+    const data = {
+        email: form_data.email,
+        name: form_data.name,
+        lastname: form_data.lastname,
+        arrival: new Date(`${form_data.year}-${form_data.month}-${form_data.day}`),
+    }
     // change the email with id when you createa data base 
     const file_name = data.name +"_"+ data.lastname+".png"
     const file = path.join(__dirname,"qr_codes",file_name)
@@ -117,7 +122,7 @@ app.post('/submit', async (req, res) => {
 
     try {
         const response = await sendemail(data.email, file,file_name);
-        res.send(response);
+        res.sendFile("success.html");
     } catch (error) {
         console.log(error)
         res.status(500).send("Internal Server Error");

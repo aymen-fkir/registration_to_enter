@@ -8,16 +8,24 @@
 </head>
 <body>
     <div class="container">
+        
         <form action="/submit" method="POST">
-            <label for="email">Email</label>
-            <input type="email" name="email" id="email"></label>
-            <label for="name">Name</label>
-            <input type="text" name="name" id="name"></label>
-            <label for="lastname">Lastname</label>
-            <input type="text" name="lastname" id="lastname"></label>
-            <label for="arrival"> arrival</label>
-            <input type="date" name="arrival" id="arrival"></label>
-            <button type="submit">submit</button>
+            <img src="assets/profileimage.jpg">
+            <div class="input">
+                <div class="generalinfo">
+                    <input type="text" name="name" id="name" placeholder="Name">
+                    <input type="text" name="lastname" id="lastname" placeholder="Lastname">
+                    <input type="email" name="email" id="email" placeholder="Email">
+                </div>
+                <div class="date">
+                    <input type="number" name="month" id="month" placeholder="M">
+                    <input type="number" name="day" id="day" placeholder="D">
+                    <input type="number" name="year" id="year" placeholder="Y">
+                </div>
+                
+                <button type="submit">submit</button>
+            </div>
+            
         </form>
     </div>
     
